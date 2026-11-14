@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SkyVibe - Weather Web App with 24-hour timeline analysis and live meteorological updates.">
+  <title>SkyVibe — Weather Web App</title>
+  
+  <!-- Modern Clean Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Main Container -->
+  <div class="app-container">
+
+    <!-- Header Section -->
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-icon">🌤️</span>
+        <div class="brand-titles">
+          <h1 class="app-title">Weather Web App</h1>
+          <p class="app-subtitle">SkyVibe • Real-Time Meteorological Forecast &amp; 24-Hour Timeline</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Search & Location Input Section -->
+    <section class="search-section" aria-label="Search and Geolocation">
+      <form id="searchForm" class="search-form">
+        <div class="input-group">
+          <span class="search-field-icon">🔍</span>
+          <input 
+            type="text" 
+            id="cityInput" 
+            class="city-input" 
+            placeholder="Enter a city name (e.g. Chattogram, Dhaka, London, Tokyo)..."
+            autocomplete="off"
+            aria-label="City Name"
+          >
+          <button type="button" id="clearBtn" class="clear-btn" title="Clear input" hidden>&times;</button>
+        </div>
+
+        <div class="action-buttons">
+          <button type="button" id="locationBtn" class="btn btn-secondary" title="Detect your current location">
+            <span class="btn-icon">📍</span>
+            <span>Use My Location</span>
+          </button>
+          <button type="submit" id="getWeatherBtn" class="btn btn-primary" disabled>
+            <span class="btn-icon">🔎</span>
+            <span>Get Weather</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Status / Feedback Toast Banner -->
+      <div id="statusMessage" class="status-message" role="status" aria-live="polite" hidden></div>
+    </section>
+
+    <!-- Main Weather Dashboard Card -->
+    <main class="main-dashboard">
+      <article class="card weather-card" id="currentWeatherCard">
+        <div class="weather-card-header">
+          <div class="location-metadata">
+            <h2 id="locationName" class="location-name">Chattogram, Bangladesh</h2>
+            <p id="lastUpdated" class="last-updated">Last Updated: Just now</p>
+          </div>
+          <button type="button" id="refreshBtn" class="btn btn-refresh" title="Refresh weather data" aria-label="Refresh weather data">
+            <span class="refresh-icon">↻</span>
+            <span class="refresh-label">Refresh</span>
+          </button>
+        </div>
+
+        <div class="weather-card-body">
+          <div class="temp-condition-block">
+            <div class="current-temp-wrapper">
+              <span id="currentTemp" class="current-temp">28</span>
+              <span class="temp-unit">°C</span>
+            </div>
+            <div class="condition-wrapper">
+              <span id="conditionEmoji" class="condition-emoji">⛅</span>
+              <span id="conditionText" class="condition-text">Partly Cloudy</span>
+            </div>
+          </div>
+
+          <!-- Secondary Metrics Grid -->
+          <div class="metrics-grid">
+            <div class="metric-item">
+              <span class="metric-icon">💨</span>
+              <div class="metric-info">
+                <span class="metric-label">Wind Speed</span>
+                <span id="windSpeed" class="metric-value">14 km/h</span>
+              </div>
+            </div>
+
+            <div class="metric-item">
+              <span class="metric-icon">🌧️</span>
+              <div class="metric-info">
+                <span class="metric-label">Chance of Rain</span>
+                <span id="chanceOfRain" class="metric-value">15%</span>
+              </div>
+            </div>
+
+            <div class="metric-item">
+              <span class="metric-icon">🌡️</span>
+              <div class="metric-info">
+                <span class="metric-label">Feels Like</span>
+                <span id="feelsLike" class="metric-value">30°C</span>
+              </div>
+            </div>
+
+            <div class="metric-item">
+              <span class="metric-icon">💧</span>
+              <div class="metric-info">
+                <span class="metric-label">Humidity</span>
+                <span id="humidity" class="metric-value">65%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Bottom Grid: Two Separate 24-Hour Horizon Cards -->
+      <section class="hourly-grid-section" aria-label="Hourly Weather Forecasts">
+        
+        <!-- 1. Previous 24 Hours Card -->
+        <article class="card hourly-card" id="previousHourlyCard">
+          <div class="hourly-card-header">
+            <div class="hourly-title-wrap">
+              <span class="timeline-badge past">History</span>
+              <h3 class="hourly-title">Previous 24 Hours</h3>
+            </div>
+            <span class="hourly-subtitle">Past Hourly Trends</span>
+          </div>
+
+          <div class="hourly-scroll-wrapper">
+            <div id="previousHourlySlots" class="hourly-slots-track">
+              <!-- Dynamically populated via app.js -->
+            </div>
+            <div class="trailing-dots-indicator" title="Continuously measured timeline">
+              <span class="dots">...</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- 2. Next 24 Hours Card -->
+        <article class="card hourly-card" id="nextHourlyCard">
+          <div class="hourly-card-header">
+            <div class="hourly-title-wrap">
+              <span class="timeline-badge future">Forecast</span>
+              <h3 class="hourly-title">Next 24 Hours</h3>
+            </div>
+            <span class="hourly-subtitle">Upcoming Conditions</span>
+          </div>
+
+          <div class="hourly-scroll-wrapper">
+            <div id="nextHourlySlots" class="hourly-slots-track">
+              <!-- Dynamically populated via app.js -->
+            </div>
+            <div class="trailing-dots-indicator" title="Upcoming horizon outlook">
+              <span class="dots">...</span>
+            </div>
+          </div>
+        </article>
+
+      </section>
+    </main>
+
+    <!-- Application Footer -->
+    <footer class="app-footer">
+      <p>SkyVibe Weather Web App &bull; Academic Frontend Development Submission</p>
+      <p class="footer-sub">Data integrated via Visual Crossing Weather API &bull; Built with HTML5, CSS3, &amp; Vanilla ES6+</p>
+    </footer>
+
+  </div>
+
+  <!-- JavaScript Entry Point -->
+  <script src="app.js"></script>
+</body>
+</html>
